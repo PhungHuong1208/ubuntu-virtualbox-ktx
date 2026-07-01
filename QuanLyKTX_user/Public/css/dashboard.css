@@ -1,0 +1,237 @@
+/* ==========================================================================
+   STUDENT PORTAL DASHBOARD - CLEAN ACADEMIC STYLE
+   ========================================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa; /* Nền xám xanh cực nhạt, dịu mắt */
+  line-height: 1.6;
+  color: #2c3e50;
+}
+
+/* ========== LAYOUT ========== */
+.container-fluid {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ========== SIDEBAR (Menu Trái) ========== */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(
+    180deg,
+    #00695c 0%,
+    #004d40 100%
+  ); /* Xanh ngọc đậm */
+  color: white;
+  padding: 30px 20px;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  font-size: 1.4em;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+.sidebar li {
+  margin-bottom: 8px;
+}
+
+.sidebar a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-radius: 8px; /* Bo góc mềm mại */
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.sidebar a:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  transform: translateX(5px); /* Hiệu ứng trượt nhẹ */
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-content {
+  flex: 1;
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* ========== HEADER ========== */
+.header {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 16px; /* Bo góc lớn chuẩn UI hiện đại */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.header h1 {
+  color: #00796b;
+  font-size: 1.6em;
+  font-weight: 700;
+}
+
+.user-info {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.user-info a {
+  color: #e74c3c;
+  text-decoration: none;
+  padding: 8px 16px;
+  background: #fdf2f2;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.user-info a:hover {
+  background: #e74c3c;
+  color: white;
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.2);
+}
+
+/* Nút Đổi mật khẩu */
+.user-info a:first-of-type {
+  color: #00796b;
+  background: #e0f2f1;
+}
+.user-info a:first-of-type:hover {
+  background: #00796b;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 121, 107, 0.2);
+}
+
+/* ========== WELCOME BANNER & ALERTS ========== */
+.welcome-banner {
+  background: linear-gradient(135deg, #00796b 0%, #009688 100%);
+  color: white;
+  padding: 25px 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 121, 107, 0.15);
+  margin-bottom: 5px;
+}
+
+.alert {
+  padding: 15px 20px;
+  border-radius: 12px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+.alert-error {
+  background: #fdf2f2;
+  color: #e74c3c;
+  border-left: 4px solid #e74c3c;
+}
+.alert-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-left: 4px solid #2e7d32;
+}
+
+/* ========== DASHBOARD GRID & CARDS ========== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+}
+
+.dashboard-card {
+  background: white;
+  padding: 30px 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-top: 4px solid #00796b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 121, 107, 0.1);
+  border-top-color: #004d40;
+}
+
+.dashboard-card .icon {
+  font-size: 45px;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover .icon {
+  transform: scale(1.1);
+}
+
+.dashboard-card h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 1.25em;
+  font-weight: 700;
+}
+
+.dashboard-card p {
+  color: #7f8c8d;
+  font-size: 0.95em;
+  line-height: 1.5;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .container-fluid {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 20px;
+  }
+  .main-content {
+    padding: 20px;
+  }
+  .header {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  .user-info {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

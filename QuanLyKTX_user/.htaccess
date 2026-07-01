@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /webktx/QuanLyKTX_user/
+
+    # Nếu file hoặc thư mục tồn tại thì giữ nguyên
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Chuyển tất cả request khác về index.php với tham số url
+    RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]
+
+</IfModule>
+
+# Nếu mod_rewrite không kích hoạt thì sẽ vẫn dùng path trực tiếp

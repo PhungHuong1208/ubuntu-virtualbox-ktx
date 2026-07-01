@@ -1,0 +1,188 @@
+/* ==========================================================================
+   STUDENT PORTAL - BÁO CÁO SỰ CỐ (CLEAN ACADEMIC & OFFICE STYLE)
+   ========================================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  /* Nền Gradient sáng, thanh lịch đồng bộ với Login và Dashboard */
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #333;
+  line-height: 1.6;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+/* ========== CONTAINER & HEADER ========== */
+.form-header {
+  max-width: 600px;
+  margin: 0 auto 20px auto;
+}
+
+.back-link {
+  color: #00796b;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95em;
+  display: inline-block;
+  margin-bottom: 10px;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: #004d40;
+  text-decoration: underline;
+}
+
+.form-header h1 {
+  color: #00796b;
+  font-size: 1.8em;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* ========== KHỐI FORM ========== */
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px; /* Bo góc tròn mềm mại */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08); /* Bóng đổ nhạt, tạo chiều sâu */
+  border-top: 5px solid #00796b; /* Điểm nhấn Xanh Ngọc */
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== Ô NHẬP LIỆU ========== */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95em;
+}
+
+.form-group.required label::after {
+  content: " *";
+  color: #e74c3c;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #dcdde1;
+  border-radius: 8px; /* Input bo góc */
+  font-size: 1em;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: #fdfdfd;
+  color: #2c3e50;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #00796b;
+  background: #ffffff;
+  /* Hiệu ứng viền Glow nhẹ chuẩn UI hiện đại */
+  box-shadow: 0 0 0 4px rgba(0, 121, 107, 0.1);
+}
+
+/* Các trường Readonly (chỉ đọc) */
+input[readonly] {
+  background-color: #f1f2f6;
+  color: #7f8c8d;
+  pointer-events: none;
+  border-color: #e1e2e6;
+}
+
+/* ========== NÚT BẤM ========== */
+.form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.05em;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.btn-success {
+  background: #00796b;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 121, 107, 0.2);
+}
+
+.btn-success:hover {
+  background: #00695c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 121, 107, 0.3);
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: white;
+  box-shadow: 0 4px 10px rgba(149, 165, 166, 0.2);
+}
+
+.btn-secondary:hover {
+  background: #7f8c8d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(149, 165, 166, 0.3);
+}
+
+/* ========== THÔNG BÁO ========== */
+.alert-success {
+  max-width: 600px;
+  margin: 0 auto 20px auto;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-left: 4px solid #2e7d32;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.08);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .form-actions {
+    flex-direction: column;
+  }
+  .form-container {
+    padding: 30px 20px;
+  }
+}
