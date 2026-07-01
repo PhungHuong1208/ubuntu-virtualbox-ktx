@@ -1,6 +1,6 @@
 <?php
 if (!isset($_SESSION['user_id'])) { header('Location: ../../index.php'); exit; }
-if (!defined('BASE_URL')) { define('BASE_URL', 'http://localhost/webktx/QuanLyKTX_API/Public/'); }
+if (!defined('BASE_URL')) { define('BASE_URL', 'http://192.168.190.128:8080/QuanLyKTX_API/Public/'); }
 ?>
 <!DOCTYPE html>
 <html lang="vi">

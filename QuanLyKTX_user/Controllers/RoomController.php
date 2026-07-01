@@ -35,7 +35,7 @@ class RoomController extends Controller {
             $room = $roomModel->timphong();
 
             if (!$room || empty($room)) {
-                $_SESSION['error'] = 'Không tìm thấy thông tin phòng.';
+                $_SESSION['error'] = 'Bạn chưa có trong phòng.';
                 $this->redirect(BASE_URL . 'auth/dashboard');
                 return;
             }

@@ -53,7 +53,7 @@
         </form>
 
         <div class="login-footer">
-            <p>Bạn là Sinh viên? <a href="http://localhost/webktx/QuanLyKTX_user/">Đăng nhập Cổng Sinh Viên</a></p>
+            <p>Bạn là Sinh viên? <a href="http://192.168.190.128:8080/QuanLyKTX_user/">Đăng nhập Cổng Sinh Viên</a></p>
         </div>
     </div>
 </body>

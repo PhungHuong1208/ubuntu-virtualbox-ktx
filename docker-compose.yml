@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  # 1. Dựng Apache Web Server chạy toàn bộ các thư mục PHP bên trong webktx
+  web:
+    build: .
+    container_name: ktx_apache_web
+    ports:
+      - "8080:80" # Bạn truy cập từ máy thật qua cổng 8080
+    volumes:
+      - .:/var/www/html # Gắn toàn bộ thư mục webktx vào Apache
+    depends_on:
+      - db
+
+  # 2. Dựng Database MySQL (thay thế cho MySQL/XAMPP cũ)
+  db:
+    image: mysql:8.0
+    container_name: ktx_mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: quanlykytucxa # Khởi tạo sẵn tên CSDL của bạn
+    ports:
+      - "3306:3306"
+    volumes:
+      - ktx_db_data:/var/lib/mysql
+
+volumes:
+  ktx_db_data:

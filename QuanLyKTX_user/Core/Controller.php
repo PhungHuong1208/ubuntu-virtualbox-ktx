@@ -21,7 +21,12 @@ abstract class Controller {
         
         // $controllerDir đang là .../Modules/user/Auth/Controllers
         // Vậy thư mục view sẽ là .../Modules/user/Auth/Views
-        $viewPath = $controllerDir . '/../Views/' . $view . '.php';
+        // Tách "auth/login" → ["auth", "login"] → "Auth/login.php"
+        $viewParts = explode('/', $view);
+        if (count($viewParts) >= 2) {
+            $viewParts[0] = ucfirst($viewParts[0]); // auth → Auth
+        }
+        $viewPath = $controllerDir . '/../Views/' . implode('/', $viewParts) . '.php';
         
         if (!file_exists($viewPath)) {
             die('View file not found: ' . $viewPath);

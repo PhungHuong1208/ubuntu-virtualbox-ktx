@@ -5,7 +5,7 @@
  */
 
 class RoomModel {
-    private $apiUrl = 'http://localhost/webktx/QuanLyKTX_API/Routes/apiUser.php';
+    private $apiUrl = 'http://192.168.190.128:8080/QuanLyKTX_API/Routes/apiUser.php';
     public function timphong(){
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

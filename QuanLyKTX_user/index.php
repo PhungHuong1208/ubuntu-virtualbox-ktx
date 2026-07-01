@@ -9,7 +9,11 @@ session_start();
 
 // Định nghĩa base path
 define('BASE_PATH', __DIR__);
-define('BASE_URL', 'http://localhost/webktx/QuanLyKTX_user/');
+// BASE_URL tự động theo môi trường (XAMPP hay Docker đều đúng)
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host     = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$dir      = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/') . '/';
+define('BASE_URL', $protocol . '://' . $host . $dir);
 
 // Không gọi CSDL nữa (Đã chuyển sang API)
 // require_once BASE_PATH . '/Config/Database.php';

@@ -19,8 +19,10 @@ class IncidentController extends Controller {
 
     public function index() {
         $keyword = $this->getInput('search');
-        if ($keyword) {
-            $incidents = $this->incidentService->searchIncidents($keyword);
+        $status = $this->getInput('status');
+        
+        if ($keyword || $status) {
+            $incidents = $this->incidentService->searchIncidents($keyword, $status);
         } else {
             $incidents = $this->incidentService->getAllIncidents();
         }
@@ -32,7 +34,8 @@ class IncidentController extends Controller {
         $this->view('incident/list', [
             'title' => 'Danh Sách Sự Cố',
             'incidents' => $incidents,
-            'keyword' => $keyword
+            'keyword' => $keyword,
+            'status' => $status
         ]);
     }
 

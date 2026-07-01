@@ -21,7 +21,14 @@ class IncidentRepository extends Repository {
                 FROM {$this->table} s 
                 LEFT JOIN phong p ON s.maphong = p.maphong 
                 LEFT JOIN sinhvien sv ON s.masv = sv.masv
-                ORDER BY s.masuco DESC";
+                ORDER BY 
+                    CASE s.trangthai
+                        WHEN 'Mới gửi' THEN 1
+                        WHEN 'Chờ Xử Lý' THEN 2
+                        WHEN 'Đang Xử Lý' THEN 3
+                        ELSE 4
+                    END ASC, 
+                    s.masuco DESC";
         return $this->fetchAll($sql);
     }
 
@@ -53,15 +60,33 @@ class IncidentRepository extends Repository {
         return $result;
     }
 
-    public function search($keyword) {
+    public function search($keyword, $status = null) {
         $sql = "SELECT s.*, p.sophong, p.toa, sv.hoten 
                 FROM {$this->table} s 
                 LEFT JOIN phong p ON s.maphong = p.maphong 
                 LEFT JOIN sinhvien sv ON s.masv = sv.masv
-                WHERE s.masuco LIKE ? OR s.maphong LIKE ? OR s.mota LIKE ? OR p.sophong LIKE ? OR sv.hoten LIKE ?
-                ORDER BY s.masuco DESC";
+                WHERE (s.masuco LIKE ? OR s.maphong LIKE ? OR s.mota LIKE ? OR p.sophong LIKE ? OR sv.hoten LIKE ? OR s.trangthai LIKE ?)";
+        
         $search = '%' . $keyword . '%';
-        return $this->fetchAll($sql, 'sssss', [$search, $search, $search, $search, $search]);
+        $types = 'ssssss';
+        $params = [$search, $search, $search, $search, $search, $search];
+
+        if (!empty($status)) {
+            $sql .= " AND s.trangthai = ?";
+            $types .= 's';
+            $params[] = $status;
+        }
+
+        $sql .= " ORDER BY 
+                    CASE s.trangthai
+                        WHEN 'Mới gửi' THEN 1
+                        WHEN 'Chờ Xử Lý' THEN 2
+                        WHEN 'Đang Xử Lý' THEN 3
+                        ELSE 4
+                    END ASC, 
+                    s.masuco DESC";
+        
+        return $this->fetchAll($sql, $types, $params);
     }
 
     /**
@@ -72,7 +97,14 @@ class IncidentRepository extends Repository {
                 FROM {$this->table} s 
                 LEFT JOIN phong p ON s.maphong = p.maphong 
                 WHERE s.masv = ?
-                ORDER BY s.masuco DESC";
+                ORDER BY 
+                    CASE s.trangthai
+                        WHEN 'Mới gửi' THEN 1
+                        WHEN 'Chờ Xử Lý' THEN 2
+                        WHEN 'Đang Xử Lý' THEN 3
+                        ELSE 4
+                    END ASC, 
+                    s.masuco DESC";
         return $this->fetchAll($sql, 's', [$masv]);
     }
 

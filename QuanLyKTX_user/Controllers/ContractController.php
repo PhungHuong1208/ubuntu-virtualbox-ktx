@@ -33,7 +33,7 @@ class ContractController extends Controller {
     $hopdongs = $contractModel->timhopdong();
 
     if (!$hopdongs || empty($hopdongs)) {
-        $_SESSION['error'] = 'Không tìm thấy thông tin hợp đồng.';
+        $_SESSION['error'] = 'Bạn chưa có hợp đồng.';
         $this->redirect(BASE_URL . 'auth/dashboard');
         return;
     }

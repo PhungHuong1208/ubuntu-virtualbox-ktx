@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if (!defined('BASE_URL')) {
-    define('BASE_URL', 'http://localhost/webktx/QuanLyKTX_API/Public/');
+    define('BASE_URL', 'http://192.168.190.128:8080/QuanLyKTX_API/Public/');
 }
 ?>
 

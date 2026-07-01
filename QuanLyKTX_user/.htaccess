@@ -1,6 +1,6 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /webktx/QuanLyKTX_user/
+    RewriteBase /QuanLyKTX_user/
 
     # Nếu file hoặc thư mục tồn tại thì giữ nguyên
     RewriteCond %{REQUEST_FILENAME} !-f
