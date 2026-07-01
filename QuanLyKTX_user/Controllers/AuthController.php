@@ -93,32 +93,33 @@ class AuthController extends Controller {
         $this->view('auth/dashboard', $data);
     }
     public function updatePassword() {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Kiểm tra mật khẩu xác nhận trước khi gọi repository
-        if ($_POST['new_password'] !== $_POST['confirm_password']) {
-            $_SESSION['error'] = 'Mật khẩu xác nhận không khớp';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Kiểm tra mật khẩu xác nhận trước khi gọi repository
+            if ($_POST['new_password'] !== $_POST['confirm_password']) {
+                $_SESSION['error'] = 'Mật khẩu xác nhận không khớp';
+                header("Location: " . BASE_URL . "auth/doimk");
+                exit();
+            }
+
+            $result = $this->authRepo->changePassword(
+                $_SESSION['masv'] ?? '',
+                $_POST['old_password'],
+                $_POST['new_password']
+            );
+
+            if (isset($result['status']) && $result['status'] === 'success') {
+                $_SESSION['success'] = "Đổi mật khẩu thành công!";
+            } else {
+                $_SESSION['error'] = $result['message'] ?? 'Có lỗi xảy ra';
+            }
+
+            // Chuyển hướng về trang đổi mật khẩu
             header("Location: " . BASE_URL . "auth/doimk");
             exit();
         }
-
-        $result = $this->authRepo->changePassword(
-            $_SESSION['masv'] ?? '',
-            $_POST['old_password'],
-            $_POST['new_password']
-        );
-
-        if (isset($result['status']) && $result['status'] === 'success') {
-            $_SESSION['success'] = "Đổi mật khẩu thành công!";
-        } else {
-            $_SESSION['error'] = $result['message'] ?? 'Có lỗi xảy ra';
-        }
-
-        // Chuyển hướng về trang đổi mật khẩu
-        header("Location: " . BASE_URL . "auth/doimk");
-        exit();
     }
-}
-/**
+
+    /**
      * Hiển thị giao diện Đổi mật khẩu
      */
     public function doimk() {
@@ -127,15 +128,12 @@ class AuthController extends Controller {
             $this->redirect(BASE_URL . 'auth');
         }
 
-        // Lấy tên sinh viên để hiển thị trên Header (giống dashboard)
-        $authRepo = new AuthModel();
-        $hoten = $authRepo->getNameByMaSV($_SESSION['masv'] ?? '');
-
         $data = [
-            'hoten' => $hoten
+            'masv'    => $this->getSession('masv'),
+            'hoten'   => $this->getSession('hoten')
         ];
 
-        // Gọi ra file View: Modules/user/Auth/Views/doimk.php
+        // Gọi ra file View: Views/auth/doimk.php
         $this->view('auth/doimk', $data);
     }
 }

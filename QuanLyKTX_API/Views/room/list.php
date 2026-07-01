@@ -30,7 +30,7 @@
     <?php endif; ?>
 
     <form method="GET" action="<?= BASE_URL ?>room" class="search-box">
-        <input type="text" name="keyword" placeholder=" 🔍 Tìm kiếm theo mã, tên phòng" value="<?= htmlspecialchars($keyword) ?>">
+        <input type="text" name="keyword" placeholder=" 🔍 Tìm kiếm theo mã, tên phòng" value="<?= htmlspecialchars($keyword ?? '') ?>">
         <button type="submit" class="btn btn-primary">Tìm Kiếm</button>
         <?php if (!empty($keyword)): ?>
             <a href="<?= BASE_URL ?>room" class="btn btn-secondary">Reset</a>
@@ -54,18 +54,20 @@
             <tbody>
                 <?php foreach ($rooms as $r): ?>
                     <tr>
-                        <td><strong><?= htmlspecialchars($r['maphong']) ?></strong></td>
-                        <td><?= htmlspecialchars($r['sophong']) ?></td>
-                        <td><?= htmlspecialchars($r['toa']) ?></td>
+                        <td><strong><?= htmlspecialchars($r['maphong'] ?? '') ?></strong></td>
+                        <td><?= htmlspecialchars($r['sophong'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($r['toa'] ?? '') ?></td>
                         <td><?= $r['succhua'] ?></td>
                         <td><?= $r['phonghientai'] ?></td>
                         <td><?= number_format($r['gia']) ?></td>
                         <td>
                             <?php if ($r['trangthai'] == 'Còn chỗ'): ?>
                                 <span style="color: #27ae60; padding: 3px 8px; font-weight: bold;">Còn chỗ</span>
+                            <?php elseif ($r['trangthai'] == 'Trống'): ?>
+                                <span style="color: #27ae60; padding: 3px 8px; font-weight: bold;">Trống</span>
                             <?php else: ?>
-                                <span style="color: #e74c3c; padding: 3px 8px; font-weight: bold;"><?= htmlspecialchars($r['trangthai']) ?></span>
-                            <?php endif; ?>`
+                                <span style="color: #e74c3c; padding: 3px 8px; font-weight: bold;"><?= htmlspecialchars($r['trangthai'] ?? '') ?></span>
+                            <?php endif; ?>
                         </td>
                         <td>
                             <div class="action-links">

@@ -1,4 +1,4 @@
-s/* ==========================================================================
+/* ==========================================================================
    STUDENT PORTAL - ĐỔI MẬT KHẨU (CLEAN ACADEMIC & OFFICE STYLE)
    ========================================================================== */
 
@@ -22,7 +22,7 @@ body {
 /* ========== KHỐI FORM ĐỔI MẬT KHẨU ========== */
 .login-box {
   background: #ffffff;
-  padding: 45px 35px;
+  padding: 50px 40px;
   border-radius: 16px; /* Bo góc tròn mềm mại */
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08); /* Bóng đổ nhạt, tạo chiều sâu */
   width: 100%;
@@ -30,6 +30,17 @@ body {
   text-align: center;
   border-top: 5px solid #00796b; /* Điểm nhấn màu Xanh Ngọc Học Đường */
   animation: slideUp 0.5s ease-out;
+}
+
+.login-box form {
+    display: grid;
+    gap: 18px;
+    width: 100%;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 0;
 }
 
 @keyframes slideUp {

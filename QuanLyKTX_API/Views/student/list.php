@@ -35,7 +35,7 @@
     <?php endif; ?>
 
     <form method="GET" action="<?= BASE_URL ?>student" class="search-box">
-        <input type="text" name="keyword" placeholder=" 🔍 Tìm kiếm theo MSSV hoặc tên..." value="<?= htmlspecialchars($keyword) ?>">
+        <input type="text" name="keyword" placeholder=" 🔍 Tìm kiếm theo MSSV hoặc tên..." value="<?= htmlspecialchars($keyword ?? '') ?>">
         <button type="submit" class="btn btn-primary">Tìm Kiếm</button>
         <?php if (!empty($keyword)): ?>
             <a href="<?= BASE_URL ?>student" class="btn btn-secondary">Reset</a>
@@ -60,14 +60,14 @@
             <tbody>
                 <?php foreach ($students as $student): ?>
                     <tr>
-                        <td><strong><?= htmlspecialchars($student['masv']) ?></strong></td>
-                        <td><?= htmlspecialchars($student['hoten']) ?></td>
-                        <td><?= htmlspecialchars($student['lop']) ?></td>
-                        <td><?= htmlspecialchars($student['gioitinh']) ?></td>
-                        <td><?= htmlspecialchars($student['cccd']) ?></td>
-                        <td><?= htmlspecialchars($student['sodienthoai']) ?></td>
-                        <td><?= htmlspecialchars($student['email']) ?></td>
-                        <td><?= htmlspecialchars($student['diachi']) ?></td>
+                        <td><strong><?= htmlspecialchars($student['masv'] ?? '') ?></strong></td>
+                        <td><?= htmlspecialchars($student['hoten'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($student['lop'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($student['gioitinh'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($student['cccd'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($student['sodienthoai'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($student['email'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($student['diachi'] ?? '') ?></td>
                         <td>
                             <div class="action-links">
                                 <a href="<?= BASE_URL ?>student/edit/<?= $student['masv'] ?>" class="btn-action btn-edit"> ✏️ Sửa</a>

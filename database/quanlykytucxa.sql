@@ -1,212 +1,480 @@
--- =====================================================
--- HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ - DATABASE
--- File: quanlykytucxa.sql
--- =====================================================
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Máy chủ: 127.0.0.1:3307
+-- Thời gian đã tạo: Th7 01, 2026 lúc 10:58 AM
+-- Phiên bản máy phục vụ: 10.4.32-MariaDB
+-- Phiên bản PHP: 8.2.12
 
-SET NAMES utf8mb4;
-SET CHARACTER SET utf8mb4;
-SET time_zone = '+07:00';
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
-CREATE DATABASE IF NOT EXISTS quanlykytucxa CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE quanlykytucxa;
 
-SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS suco;
-DROP TABLE IF EXISTS thanhtoan;
-DROP TABLE IF EXISTS hopdong;
-DROP TABLE IF EXISTS taikhoan_user;
-DROP TABLE IF EXISTS sinhvien;
-DROP TABLE IF EXISTS phong;
-DROP TABLE IF EXISTS taikhoan_admin;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
--- =====================================================
--- TẠO CẤU TRÚC BẢNG
--- =====================================================
-CREATE TABLE taikhoan_admin (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+--
+-- Cơ sở dữ liệu: `quanlykytucxa`
+--
 
-CREATE TABLE sinhvien (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    masv VARCHAR(20) UNIQUE NOT NULL,
-    hoten VARCHAR(100) NOT NULL,
-    lop VARCHAR(20),
-    gioitinh VARCHAR(10),
-    cccd VARCHAR(20),
-    sodienthoai VARCHAR(15),
-    email VARCHAR(100),
-    diachi TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- --------------------------------------------------------
 
-CREATE TABLE taikhoan_user (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    masv VARCHAR(20) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (masv) REFERENCES sinhvien(masv)
-);
+--
+-- Cấu trúc bảng cho bảng `hopdong`
+--
 
-CREATE TABLE phong (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    maphong VARCHAR(20) UNIQUE NOT NULL,
-    sophong VARCHAR(10),
-    toa VARCHAR(5),
-    succhua INT DEFAULT 8,
-    phonghientai INT DEFAULT 0,
-    gia DECIMAL(10,2),
-    trangthai VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+CREATE TABLE `hopdong` (
+  `mahopdong` varchar(20) NOT NULL,
+  `masv` varchar(20) DEFAULT NULL,
+  `maphong` varchar(20) DEFAULT NULL,
+  `batdau` date DEFAULT NULL,
+  `hethan` date DEFAULT NULL,
+  `trangthai` varchar(20) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE hopdong (
-    mahopdong VARCHAR(20) PRIMARY KEY,
-    masv VARCHAR(20),
-    maphong VARCHAR(20),
-    batdau DATE,
-    hethan DATE,
-    trangthai VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (masv) REFERENCES sinhvien(masv),
-    FOREIGN KEY (maphong) REFERENCES phong(maphong)
-);
+--
+-- Đang đổ dữ liệu cho bảng `hopdong`
+--
 
-CREATE TABLE thanhtoan (
-    mathanhtoan INT PRIMARY KEY AUTO_INCREMENT,
-    maphong VARCHAR(20),
-    sotien DECIMAL(10,2),
-    ngaytra DATE,
-    trangthai VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (maphong) REFERENCES phong(maphong)
-);
+INSERT INTO `hopdong` (`mahopdong`, `masv`, `maphong`, `batdau`, `hethan`, `trangthai`, `created_at`) VALUES
+('HD001', '74DCTT001', 'P101', '2026-01-01', '2026-12-31', 'Đang Hoạt Động', '2026-04-05 03:06:09'),
+('HD003', '74DCTT003', 'P201', '2026-03-01', '2026-12-31', 'Đang Hoạt Động', '2026-04-05 03:06:09'),
+('HD004', '74DCTT0021', 'P201', '2026-04-26', '2026-07-01', 'Đang Hoạt Động', '2026-05-09 13:47:13'),
+('HD005', 'SV001', 'C101', '2026-06-02', '2027-10-23', 'Đang Hoạt Động', '2026-06-23 02:08:35'),
+('HD006', '74DCTT0030', 'D102', '2026-06-01', '2026-06-28', 'Đang Hoạt Động', '2026-06-28 15:51:18');
 
-CREATE TABLE suco (
-    masuco INT PRIMARY KEY AUTO_INCREMENT,
-    maphong VARCHAR(20),
-    mota TEXT,
-    ngaybao DATE,
-    trangthai VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (maphong) REFERENCES phong(maphong)
-);
+--
+-- Bẫy `hopdong`
+--
+DELIMITER $$
+CREATE TRIGGER `trg_hopdong_after_delete` AFTER DELETE ON `hopdong` FOR EACH ROW BEGIN
+    IF OLD.trangthai = 'Đang Hoạt Động' THEN
+        UPDATE phong SET phonghientai = GREATEST(0, phonghientai - 1) WHERE maphong = OLD.maphong;
+    END IF;
+    UPDATE phong SET trangthai = IF(phonghientai >= succhua, 'Đầy', 'Trống') WHERE maphong = OLD.maphong;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `trg_hopdong_after_insert` AFTER INSERT ON `hopdong` FOR EACH ROW BEGIN
+    IF NEW.trangthai = 'Đang Hoạt Động' THEN
+        UPDATE phong SET phonghientai = phonghientai + 1 WHERE maphong = NEW.maphong;
+    END IF;
+    UPDATE phong SET trangthai = IF(phonghientai >= succhua, 'Đầy', 'Trống') WHERE maphong = NEW.maphong;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `trg_hopdong_after_update` AFTER UPDATE ON `hopdong` FOR EACH ROW BEGIN
+    -- 1. Nếu thay đổi phòng
+    IF OLD.maphong <> NEW.maphong THEN
+        IF OLD.trangthai = 'Đang Hoạt Động' THEN
+            UPDATE phong SET phonghientai = GREATEST(0, phonghientai - 1) WHERE maphong = OLD.maphong;
+        END IF;
+        IF NEW.trangthai = 'Đang Hoạt Động' THEN
+            UPDATE phong SET phonghientai = phonghientai + 1 WHERE maphong = NEW.maphong;
+        END IF;
+    -- 2. Nếu không đổi phòng nhưng đổi trạng thái
+    ELSEIF OLD.trangthai <> NEW.trangthai THEN
+        IF OLD.trangthai = 'Đang Hoạt Động' THEN
+            UPDATE phong SET phonghientai = GREATEST(0, phonghientai - 1) WHERE maphong = OLD.maphong;
+        ELSEIF NEW.trangthai = 'Đang Hoạt Động' THEN
+            UPDATE phong SET phonghientai = phonghientai + 1 WHERE maphong = NEW.maphong;
+        END IF;
+    END IF;
 
-CREATE TABLE tiendien (
-    matd INT PRIMARY KEY AUTO_INCREMENT,
-    maphong VARCHAR(20),
-    giadien VARCHAR(20),
-CREATE TABLE tiennuoc (
-    matn INT PRIMARY KEY AUTO_INCREMENT,
-    maphong VARCHAR(20),
-    gianuoc VARCHAR(20),
-    ngaytra DATE,
-    trangthai VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (maphong) REFERENCES phong(maphong)
-);
+    -- Cập nhật trạng thái
+    UPDATE phong SET trangthai = IF(phonghientai >= succhua, 'Đầy', 'Trống') WHERE maphong = OLD.maphong;
+    UPDATE phong SET trangthai = IF(phonghientai >= succhua, 'Đầy', 'Trống') WHERE maphong = NEW.maphong;
+END
+$$
+DELIMITER ;
 
-SET FOREIGN_KEY_CHECKS = 1;
+-- --------------------------------------------------------
 
--- =====================================================
--- DỮ LIỆU MẪU
--- =====================================================
+--
+-- Cấu trúc bảng cho bảng `phong`
+--
 
--- 1. TÀI KHOẢN ADMIN (đăng nhập: admin / admin123)
--- 1. TÀI KHOẢN ADMIN (đăng nhập: admin / admin123)
-INSERT INTO taikhoan_admin (username, password) VALUES
-('admin',  'admin123'),
-('quantri', 'quantri123');
+CREATE TABLE `phong` (
+  `id` int(11) NOT NULL,
+  `maphong` varchar(20) NOT NULL,
+  `sophong` varchar(10) DEFAULT NULL,
+  `toa` varchar(5) DEFAULT NULL,
+  `succhua` int(11) DEFAULT 8,
+  `phonghientai` int(11) DEFAULT 0,
+  `gia` decimal(10,2) DEFAULT NULL,
+  `trangthai` varchar(20) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 2. PHÒNG KÝ TÚC XÁ (Tòa A: Nam | Tòa B: Nữ)
-INSERT INTO phong (maphong, sophong, toa, succhua, phonghientai, gia, trangthai) VALUES
-('A101', '101', 'A', 8, 6, 500000, 'Còn chỗ'),
-('A102', '102', 'A', 8, 8, 500000, 'Hết chỗ'),
-('A103', '103', 'A', 8, 3, 500000, 'Còn chỗ'),
-('A201', '201', 'A', 8, 0, 600000, 'Còn chỗ'),
-('A202', '202', 'A', 8, 7, 600000, 'Còn chỗ'),
-('B101', '101', 'B', 8, 5, 500000, 'Còn chỗ'),
-('B102', '102', 'B', 8, 8, 500000, 'Hết chỗ'),
-('B103', '103', 'B', 8, 2, 500000, 'Còn chỗ'),
-('B201', '201', 'B', 8, 4, 600000, 'Còn chỗ'),
-('B202', '202', 'B', 8, 6, 600000, 'Còn chỗ');
+--
+-- Đang đổ dữ liệu cho bảng `phong`
+--
 
--- 3. SINH VIÊN MẪU
-INSERT INTO sinhvien (masv, hoten, lop, gioitinh, cccd, sodienthoai, email, diachi) VALUES
-('74DCTT001', 'Nguyễn Văn An',    '74DCTT01', 'Nam', '001234567890', '0912345678', 'nguyenvanan@email.com',  'Hà Nội'),
-('74DCTT002', 'Trần Thị Bình',    '74DCTT01', 'Nữ',  '001234567891', '0912345679', 'tranthihinh@email.com',  'Bắc Giang'),
-('74DCTT003', 'Lê Văn Cường',     '74DCTT02', 'Nam', '001234567892', '0912345680', 'levancuong@email.com',   'Hải Phòng'),
-('74DCTT004', 'Phạm Thị Dung',    '74DCTT02', 'Nữ',  '001234567893', '0912345681', 'phamthidung@email.com',  'Nam Định'),
-('74DCTT005', 'Hoàng Văn Em',     '74DCTT03', 'Nam', '001234567894', '0912345682', 'hoangvanem@email.com',   'Thái Bình'),
-('74DCTT006', 'Vũ Thị Phương',    '74DCTT03', 'Nữ',  '001234567895', '0912345683', 'vuthiphuong@email.com',  'Ninh Bình'),
-('74DCTT007', 'Đặng Văn Giang',   '74DCTT04', 'Nam', '001234567896', '0912345684', 'dangvangiang@email.com', 'Hưng Yên'),
-('74DCTT008', 'Bùi Thị Hoa',      '74DCTT04', 'Nữ',  '001234567897', '0912345685', 'buithihoa@email.com',    'Vĩnh Phúc');
+INSERT INTO `phong` (`id`, `maphong`, `sophong`, `toa`, `succhua`, `phonghientai`, `gia`, `trangthai`, `created_at`) VALUES
+(1, 'P101', '101', 'A', 8, 1, 1200000.00, 'Trống', '2026-04-05 03:06:09'),
+(2, 'P102', '102', 'A', 8, 0, 1200000.00, 'Bảo Trì', '2026-04-05 03:06:09'),
+(3, 'P201', '201', 'B', 8, 2, 1500000.00, 'Bảo Trì', '2026-04-05 03:06:09'),
+(9, 'C101', '101', 'C', 8, 1, 1200000.00, 'Trống', '2026-05-09 15:41:37'),
+(10, 'D102', '102', 'D', 8, 1, 200000.00, 'Trống', '2026-06-28 15:50:17');
 
--- 4. TÀI KHOẢN SINH VIÊN (mật khẩu mặc định: 123456)
-INSERT INTO taikhoan_user (masv, password) VALUES
-('74DCTT001', '123456'),
-('74DCTT002', '123456'),
-('74DCTT003', '123456'),
-('74DCTT004', '123456'),
-('74DCTT005', '123456'),
-('74DCTT006', '123456'),
-('74DCTT007', '123456'),
-('74DCTT008', '123456');
+-- --------------------------------------------------------
 
--- 5. HỢP ĐỒNG
-INSERT INTO hopdong (mahopdong, masv, maphong, batdau, hethan, trangthai) VALUES
-('HD001', '74DCTT001', 'A101', '2025-09-01', '2026-06-30', 'Còn hiệu lực'),
-('HD002', '74DCTT003', 'A101', '2025-09-01', '2026-06-30', 'Còn hiệu lực'),
-('HD003', '74DCTT005', 'A103', '2025-09-01', '2026-06-30', 'Còn hiệu lực'),
-('HD004', '74DCTT007', 'A202', '2025-09-01', '2026-06-30', 'Còn hiệu lực'),
-('HD005', '74DCTT002', 'B101', '2025-09-01', '2026-06-30', 'Còn hiệu lực'),
-('HD006', '74DCTT004', 'B101', '2025-09-01', '2026-06-30', 'Còn hiệu lực'),
-('HD007', '74DCTT006', 'B201', '2025-09-01', '2026-06-30', 'Còn hiệu lực'),
-('HD008', '74DCTT008', 'B201', '2025-09-01', '2026-06-30', 'Còn hiệu lực');
+--
+-- Cấu trúc bảng cho bảng `sinhvien`
+--
 
--- 6. THANH TOÁN
-INSERT INTO thanhtoan (maphong, sotien, ngaytra, trangthai) VALUES
-('A101', 500000, '2026-01-05', 'Đã thanh toán'),
-('A101', 500000, '2026-02-05', 'Đã thanh toán'),
-('A101', 500000, '2026-03-05', 'Đã thanh toán'),
-('A103', 500000, '2026-01-05', 'Đã thanh toán'),
-('A103', 500000, '2026-02-05', 'Đã thanh toán'),
-('A103', 500000, '2026-03-06', 'Trễ hạn'),
-('B101', 500000, '2026-01-04', 'Đã thanh toán'),
-('B101', 500000, '2026-02-04', 'Đã thanh toán'),
-('A202', 600000, '2026-01-03', 'Đã thanh toán'),
-('A202', 600000, '2026-02-10', 'Trễ hạn'),
-('B201', 600000, '2026-01-05', 'Đã thanh toán'),
-('B201', 600000, '2026-02-05', 'Đã thanh toán');
+CREATE TABLE `sinhvien` (
+  `id` int(11) NOT NULL,
+  `masv` varchar(20) NOT NULL,
+  `hoten` varchar(100) NOT NULL,
+  `lop` varchar(20) DEFAULT NULL,
+  `gioitinh` varchar(10) DEFAULT NULL,
+  `cccd` varchar(20) DEFAULT NULL,
+  `sodienthoai` varchar(15) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `diachi` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 7. SỰ CỐ
-INSERT INTO suco (maphong, mota, ngaybao, trangthai) VALUES
-('A101', 'Bóng đèn phòng tắm bị cháy, cần thay mới',      '2026-05-10', 'Đã xử lý'),
-('A103', 'Vòi nước bị rò rỉ, chảy nước liên tục',          '2026-05-15', 'Đang xử lý'),
-('B101', 'Quạt trần bị hỏng, không chạy được',             '2026-05-20', 'Chờ xử lý'),
-('B201', 'Cửa phòng bị hỏng khóa, không đóng được',        '2026-06-01', 'Đã xử lý'),
-('A202', 'Điều hoà không lạnh, cần kiểm tra gas',          '2026-06-05', 'Đang xử lý'),
-('B103', 'Tường bị ẩm mốc sau mưa lớn',                    '2026-06-10', 'Chờ xử lý');
+--
+-- Đang đổ dữ liệu cho bảng `sinhvien`
+--
 
--- 8. TIỀN DIỆN
-INSERT INTO tiendien (matd, maphong, giadien, ngay, trangthai) VALUES
-('td001', 'P207', '553124', '2026-05-04', 'Chưa thanh toán'),
-('td002', 'P302', '65016', '2026-05-04', 'Chưa thanh toán'),
-('td003', 'P304', '1145203', '2026-05-04', 'Đã thanh toán');
--- 9. TIỀN NƯỚC
-INSERT INTO tiennuoc (matn, maphong, gianuoc, ngay, trangthai) VALUES
-('tn001', 'P201', '144000', '2026-04-19', 'Chưa thanh toán'),
-('tn002', 'P301', '96000', '2026-05-03', 'Chưa thanh toán');
+INSERT INTO `sinhvien` (`id`, `masv`, `hoten`, `lop`, `gioitinh`, `cccd`, `sodienthoai`, `email`, `diachi`, `created_at`) VALUES
+(1, '74DCTT001', 'Nguyễn Văn A', 'CNTT', 'Nam', '012345678901', '0918798764', 'nguyenvana@example.com', '123 Đường ABC, Quận ABC, Hà Nộii', '2026-04-05 02:59:34'),
+(2, '74DCTT002', 'Tran Thi B', 'CNTT2', 'Nữ', '012345678902', '0912345678', 'NguyenThiB@example.com', 'Hà Nội', '2026-04-05 02:59:34'),
+(3, '74DCTT003', 'Le Van C', 'CNTT3', 'Nam', '012345678903', '0903456789', 'c@example.com', 'Nam Định', '2026-04-05 02:59:34'),
+(5, '74DCTT0024', 'Nguyễn Văn B', '74DCTT28', 'Nữ', '022156765761', '087777754', 'vanb@example.com', 'Hồ Chí Minh', '2026-04-21 14:07:50'),
+(6, '74DCTT32109', 'Bành Thị Lòi Le', 'CNTT36', 'Nam', '0739825173', '08882573118', 'loile@gmail.com', 'Hà Nội', '2026-05-09 09:26:35'),
+(8, '74DCTT0021', 'Nguyễn Văn C', 'CNTT1', 'Nam', '012345678902', '0877865134', 'NguyenVanC@example.com', 'Hà Nội', '2026-05-09 10:02:45'),
+(16, 'SV001', 'Nguyễn Tiến D', 'CT08C', 'Nam', '012345678901', '0901234567', 'NguyenVanC@example.com', 'Hà Nội', '2026-06-23 02:04:59'),
+(17, '74DCTT0030', 'Nguyễn Thị Dung', 'CTD0021', 'Nữ', '02211231233', '087794552', 'nguyenthid@gmail.com', 'Hà Tây', '2026-06-28 15:44:42');
 
--- =====================================================
--- KIỂM TRA KẾT QUẢ
--- =====================================================
-SELECT CONCAT('taikhoan_admin: ', COUNT(*), ' bản ghi') AS ket_qua FROM taikhoan_admin
-UNION ALL SELECT CONCAT('sinhvien: ', COUNT(*), ' bản ghi') FROM sinhvien
-UNION ALL SELECT CONCAT('taikhoan_user: ', COUNT(*), ' bản ghi') FROM taikhoan_user
-UNION ALL SELECT CONCAT('phong: ', COUNT(*), ' bản ghi') FROM phong
-UNION ALL SELECT CONCAT('hopdong: ', COUNT(*), ' bản ghi') FROM hopdong
-UNION ALL SELECT CONCAT('thanhtoan: ', COUNT(*), ' bản ghi') FROM thanhtoan
-UNION ALL SELECT CONCAT('suco: ', COUNT(*), ' bản ghi') FROM suco;
+--
+-- Bẫy `sinhvien`
+--
+DELIMITER $$
+CREATE TRIGGER `after_sinhvien_insert` AFTER INSERT ON `sinhvien` FOR EACH ROW BEGIN
+    INSERT INTO taikhoan_user (masv, password)
+    VALUES (NEW.masv, '123456');
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `before_sinhvien_delete` BEFORE DELETE ON `sinhvien` FOR EACH ROW BEGIN
+    -- Xóa tài khoản liên kết với mã sinh viên sắp bị xóa
+    DELETE FROM taikhoan_user WHERE masv = OLD.masv;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `suco`
+--
+
+CREATE TABLE `suco` (
+  `masuco` int(11) NOT NULL,
+  `maphong` varchar(20) DEFAULT NULL,
+  `masv` varchar(20) DEFAULT NULL,
+  `mota` text DEFAULT NULL,
+  `ngaybao` date DEFAULT NULL,
+  `trangthai` varchar(20) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `suco`
+--
+
+INSERT INTO `suco` (`masuco`, `maphong`, `masv`, `mota`, `ngaybao`, `trangthai`, `created_at`) VALUES
+(1, 'P101', NULL, 'Hỏng bóng đèn', '2026-01-10', 'Đã xử lý', '2026-04-05 03:06:09'),
+(2, 'P102', NULL, 'Rò rỉ nước', '2026-02-12', 'Đang xử lý', '2026-04-05 03:06:09'),
+(3, 'P201', NULL, 'Ổ cắm điện hỏng', '2026-03-08', 'Đã xử lý', '2026-04-05 03:06:09'),
+(5, 'P101', NULL, 'Hỏng bàn', '2026-01-11', 'Đang xử lý', '2026-05-07 13:49:40'),
+(6, 'P101', '74DCTT001', 'Hỏng đèn', '2026-05-09', 'Mới gửi', '2026-05-09 10:15:31'),
+(7, 'P101', '74DCTT001', 'Hỏng bóng đèn trong phòng', '2026-05-09', 'Mới gửi', '2026-05-09 14:59:56'),
+(9, 'P101', '74DCTT001', 'Hỏng bóng đèn trong phòng', '2026-05-09', 'Mới gửi', '2026-05-09 15:29:32'),
+(10, 'P101', '74DCTT001', 'Hỏng bóng đèn trong phòng', '2026-05-09', 'Mới gửi', '2026-05-09 15:29:38'),
+(11, 'P101', '74DCTT001', 'Hỏng bóng đèn trong phòng', '2026-05-09', 'Mới gửi', '2026-05-09 15:44:52'),
+(12, 'P101', NULL, 'Sập giường', '2026-06-28', 'Chờ Xử Lý', '2026-06-28 15:55:24'),
+(13, 'D102', '74DCTT0030', 'qưeqweqwe', '2026-06-28', 'Mới gửi', '2026-06-28 16:30:03');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `taikhoan_admin`
+--
+
+CREATE TABLE `taikhoan_admin` (
+  `id` int(11) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `taikhoan_admin`
+--
+
+INSERT INTO `taikhoan_admin` (`id`, `username`, `password`, `created_at`) VALUES
+(1, 'admin', 'admin123', '2026-04-05 02:59:34');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `taikhoan_user`
+--
+
+CREATE TABLE `taikhoan_user` (
+  `id` int(11) NOT NULL,
+  `masv` varchar(20) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `taikhoan_user`
+--
+
+INSERT INTO `taikhoan_user` (`id`, `masv`, `password`, `created_at`) VALUES
+(4, '74DCTT001', '1234', '2026-04-05 03:06:09'),
+(5, '74DCTT002', '123', '2026-04-05 03:06:09'),
+(6, '74DCTT003', '123456', '2026-04-05 03:06:09'),
+(7, '74DCTT0024', '123', '2026-04-21 14:07:50'),
+(8, '74DCTT32109', '123456', '2026-05-09 09:26:35'),
+(9, '74DCTT0021', '123456', '2026-05-09 10:02:45'),
+(10, 'SV001', '123456', '2026-06-23 02:04:59'),
+(11, '74DCTT0030', '123456', '2026-06-28 15:44:42');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `thanhtoan`
+--
+
+CREATE TABLE `thanhtoan` (
+  `mathanhtoan` int(11) NOT NULL,
+  `maphong` varchar(20) DEFAULT NULL,
+  `sotien` decimal(10,2) DEFAULT NULL,
+  `ngaytra` date DEFAULT NULL,
+  `trangthai` varchar(20) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `thanhtoan`
+--
+
+INSERT INTO `thanhtoan` (`mathanhtoan`, `maphong`, `sotien`, `ngaytra`, `trangthai`, `created_at`) VALUES
+(2, 'P102', 1200000.00, '2026-02-05', 'Đã trả', '2026-04-05 03:06:09'),
+(4, 'P101', 1200000.00, '2026-07-01', 'Đã Thanh Toán', '2026-06-28 15:53:02');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `tiendien`
+--
+
+CREATE TABLE `tiendien` (
+  `matd` int(11) NOT NULL,
+  `maphong` varchar(20) NOT NULL,
+  `giadien` varchar(20) DEFAULT NULL,
+  `ngay` date NOT NULL,
+  `trangthai` varchar(50) DEFAULT 'Chưa thanh toán'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `tiendien`
+--
+
+INSERT INTO `tiendien` (`matd`, `maphong`, `giadien`, `ngay`, `trangthai`) VALUES
+(1, 'D102', '183600', '2026-06-28', 'Đã thanh toán');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `tiennuoc`
+--
+
+CREATE TABLE `tiennuoc` (
+  `matn` int(11) NOT NULL,
+  `maphong` varchar(20) NOT NULL,
+  `gianuoc` varchar(20) DEFAULT NULL,
+  `ngay` date NOT NULL,
+  `trangthai` varchar(50) DEFAULT 'Chưa thanh toán'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Chỉ mục cho các bảng đã đổ
+--
+
+--
+-- Chỉ mục cho bảng `hopdong`
+--
+ALTER TABLE `hopdong`
+  ADD PRIMARY KEY (`mahopdong`),
+  ADD KEY `masv` (`masv`),
+  ADD KEY `maphong` (`maphong`);
+
+--
+-- Chỉ mục cho bảng `phong`
+--
+ALTER TABLE `phong`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `maphong` (`maphong`);
+
+--
+-- Chỉ mục cho bảng `sinhvien`
+--
+ALTER TABLE `sinhvien`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `masv` (`masv`);
+
+--
+-- Chỉ mục cho bảng `suco`
+--
+ALTER TABLE `suco`
+  ADD PRIMARY KEY (`masuco`),
+  ADD KEY `maphong` (`maphong`);
+
+--
+-- Chỉ mục cho bảng `taikhoan_admin`
+--
+ALTER TABLE `taikhoan_admin`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
+-- Chỉ mục cho bảng `taikhoan_user`
+--
+ALTER TABLE `taikhoan_user`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `masv` (`masv`);
+
+--
+-- Chỉ mục cho bảng `thanhtoan`
+--
+ALTER TABLE `thanhtoan`
+  ADD PRIMARY KEY (`mathanhtoan`),
+  ADD KEY `maphong` (`maphong`);
+
+--
+-- Chỉ mục cho bảng `tiendien`
+--
+ALTER TABLE `tiendien`
+  ADD PRIMARY KEY (`matd`),
+  ADD KEY `maphong` (`maphong`);
+
+--
+-- Chỉ mục cho bảng `tiennuoc`
+--
+ALTER TABLE `tiennuoc`
+  ADD PRIMARY KEY (`matn`),
+  ADD KEY `maphong` (`maphong`);
+
+--
+-- AUTO_INCREMENT cho các bảng đã đổ
+--
+
+--
+-- AUTO_INCREMENT cho bảng `phong`
+--
+ALTER TABLE `phong`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT cho bảng `sinhvien`
+--
+ALTER TABLE `sinhvien`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT cho bảng `suco`
+--
+ALTER TABLE `suco`
+  MODIFY `masuco` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT cho bảng `taikhoan_admin`
+--
+ALTER TABLE `taikhoan_admin`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT cho bảng `taikhoan_user`
+--
+ALTER TABLE `taikhoan_user`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT cho bảng `thanhtoan`
+--
+ALTER TABLE `thanhtoan`
+  MODIFY `mathanhtoan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT cho bảng `tiendien`
+--
+ALTER TABLE `tiendien`
+  MODIFY `matd` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT cho bảng `tiennuoc`
+--
+ALTER TABLE `tiennuoc`
+  MODIFY `matn` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Các ràng buộc cho các bảng đã đổ
+--
+
+--
+-- Các ràng buộc cho bảng `hopdong`
+--
+ALTER TABLE `hopdong`
+  ADD CONSTRAINT `hopdong_ibfk_1` FOREIGN KEY (`masv`) REFERENCES `sinhvien` (`masv`),
+  ADD CONSTRAINT `hopdong_ibfk_2` FOREIGN KEY (`maphong`) REFERENCES `phong` (`maphong`);
+
+--
+-- Các ràng buộc cho bảng `suco`
+--
+ALTER TABLE `suco`
+  ADD CONSTRAINT `suco_ibfk_1` FOREIGN KEY (`maphong`) REFERENCES `phong` (`maphong`);
+
+--
+-- Các ràng buộc cho bảng `taikhoan_user`
+--
+ALTER TABLE `taikhoan_user`
+  ADD CONSTRAINT `taikhoan_user_ibfk_1` FOREIGN KEY (`masv`) REFERENCES `sinhvien` (`masv`);
+
+--
+-- Các ràng buộc cho bảng `thanhtoan`
+--
+ALTER TABLE `thanhtoan`
+  ADD CONSTRAINT `thanhtoan_ibfk_1` FOREIGN KEY (`maphong`) REFERENCES `phong` (`maphong`);
+
+--
+-- Các ràng buộc cho bảng `tiendien`
+--
+ALTER TABLE `tiendien`
+  ADD CONSTRAINT `tiendien_ibfk_1` FOREIGN KEY (`maphong`) REFERENCES `phong` (`maphong`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `tiennuoc`
+--
+ALTER TABLE `tiennuoc`
+  ADD CONSTRAINT `tiennuoc_ibfk_1` FOREIGN KEY (`maphong`) REFERENCES `phong` (`maphong`) ON DELETE CASCADE ON UPDATE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
