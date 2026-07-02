@@ -9,6 +9,7 @@ session_start();
 
 // Định nghĩa base path
 define('BASE_PATH', __DIR__);
+require_once __DIR__ . '/config.php';
 // BASE_URL tự động theo môi trường (XAMPP hay Docker đều đúng)
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host     = $_SERVER['HTTP_HOST'] ?? 'localhost';
@@ -26,5 +27,5 @@ require_once BASE_PATH . '/Core/Controller.php';
 
 // Gọi Router để xử lý request
 require_once BASE_PATH . '/UserRouter.php';
-require_once __DIR__ . '/config.php';
+
 ?>
