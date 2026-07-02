@@ -1,7 +1,7 @@
 <?php
 
 class ContractModel {
-    private $apiUrl = 'http://localhost:8080/QuanLyKTX_API/Routes/apiUser.php';
+    private $apiUrl = API_URL;
 
     public function timhopdong(){
         if (session_status() === PHP_SESSION_NONE) {

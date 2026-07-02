@@ -5,7 +5,7 @@
  */
 
 class StudentModel {
-private $apiUrl = 'http://localhost:8080/QuanLyKTX_API/Routes/apiUser.php';
+private $apiUrl = API_URL;
     public function timmasv(){
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
