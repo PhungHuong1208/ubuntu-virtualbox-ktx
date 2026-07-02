@@ -26,5 +26,5 @@ require_once BASE_PATH . '/Core/Controller.php';
 
 // Gọi Router để xử lý request
 require_once BASE_PATH . '/UserRouter.php';
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 ?>
