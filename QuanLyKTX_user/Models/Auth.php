@@ -5,7 +5,9 @@
  */
 
 class AuthModel {
-    private $apiUrl = 'http://localhost:8080/QuanLyKTX_API/Routes/apiUser.php';
+    // Xóa dòng cũ: private $apiUrl = 'http://localhost:8080/...';
+// Thay bằng:
+    private $apiUrl = API_URL;
 
     public function authenticate($masv, $password) {
         $url = $this->apiUrl . '?action=login';
