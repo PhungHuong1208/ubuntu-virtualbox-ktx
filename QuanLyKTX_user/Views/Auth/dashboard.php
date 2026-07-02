@@ -5,13 +5,13 @@
 
 // Kiểm tra đã login hay chưa
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ' . (defined('BASE_URL') ? BASE_URL : 'http://10.0.2.15:8080/QuanLyKTX_user/') . 'index.php');
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : 'http://localhost:8080/QuanLyKTX_user/') . 'index.php');
     exit;
 }
 
 // Define BASE_URL nếu chưa được định nghĩa
 if (!defined('BASE_URL')) {
-    define('BASE_URL', 'http://10.0.2.15:8080/QuanLyKTX_user/');
+    define('BASE_URL', 'http://localhost:8080/QuanLyKTX_user/');
 }
 
 $hoten = $_SESSION['hoten'];

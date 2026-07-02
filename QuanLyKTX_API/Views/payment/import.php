@@ -1,5 +1,5 @@
 <?php
-if (!defined('BASE_URL')) { define('BASE_URL', 'http://10.0.2.15:8080/QuanLyKTX_API/Public/'); }
+if (!defined('BASE_URL')) { define('BASE_URL', 'http://localhost:8080/QuanLyKTX_API/Public/'); }
 ?>
 <!DOCTYPE html>
 <html lang="vi">

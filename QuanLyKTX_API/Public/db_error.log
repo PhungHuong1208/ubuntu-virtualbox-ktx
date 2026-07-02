@@ -1,0 +1,2 @@
+DB Error in insertRequest: Cannot add or update a child row: a foreign key constraint fails (`quanlykytucxa`.`suco`, CONSTRAINT `suco_ibfk_1` FOREIGN KEY (`maphong`) REFERENCES `phong` (`maphong`))
+DB Error in insertRequest: Cannot add or update a child row: a foreign key constraint fails (`quanlykytucxa`.`suco`, CONSTRAINT `suco_ibfk_1` FOREIGN KEY (`maphong`) REFERENCES `phong` (`maphong`))
